@@ -421,6 +421,9 @@ function vibrateDevice(pattern = [50]) {
 let cardsInPlay = [];
 
 function startGame() {
+    // If game is already active, don't restart
+    if (gameActive && gameStarted) return;
+    
     deck = createDeck();
     // Split deck 50/50 between players
     const half = Math.floor(deck.length / 2);
@@ -433,7 +436,7 @@ function startGame() {
     scores = { a: 0, b: 0 };
     isProcessing = false;
     gameActive = true;
-    gameStarted = !gameStarted; // Toggle game state on each tap
+    gameStarted = true; // Always set to true when starting
     matchFound = false;
     
     // Initialize audio on first interaction
@@ -441,14 +444,9 @@ function startGame() {
     
     updateUI();
     modal.style.display = 'none';
-    
-    if (gameStarted) {
-        // Start the game - reveal first card after short delay
-        setTimeout(revealNextCard, 500);
-    } else {
-        // Stop the game - clear timer
-        clearTimeout(autoAdvanceTimer);
-    }
+
+    // Start the game - reveal first card after short delay
+    setTimeout(revealNextCard, 500);
 }
 
 function revealNextCard() {
