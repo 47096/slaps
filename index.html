@@ -50,11 +50,19 @@
         #zone-a {
             background-color: #2c3e50;
             border-bottom: 2px solid #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         #zone-b {
             background-color: #2c3e50;
             border-top: 2px solid #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         /* Center Strip - Takes 1/3 of screen */
@@ -234,6 +242,10 @@
 <div id="game-container">
     <!-- Player A Zone (Top) -->
     <div id="zone-a" class="player-zone">
+        <div class="stat-box" style="margin-bottom: 10px;">
+            <span class="stat-label" style="color: rgba(255,255,255,0.5); font-size: 0.6rem;">Cards</span>
+            <span class="stat-value" style="color: rgba(255,255,255,0.9); font-size: 1.2rem;" id="cards-a">26</span>
+        </div>
         <div class="player-label">Player A</div>
     </div>
 
@@ -263,6 +275,10 @@
     <!-- Player B Zone (Bottom) -->
     <div id="zone-b" class="player-zone">
         <div class="player-label">Player B</div>
+        <div class="stat-box" style="margin-top: 10px;">
+            <span class="stat-label" style="color: rgba(255,255,255,0.5); font-size: 0.6rem;">Cards</span>
+            <span class="stat-value" style="color: rgba(255,255,255,0.9); font-size: 1.2rem;" id="cards-b">26</span>
+        </div>
     </div>
 
     <!-- Game Over Screen -->
@@ -303,6 +319,8 @@ const elCall = document.getElementById('current-call');
 const elDeck = document.getElementById('deck-count');
 const elScoreA = document.getElementById('score-a');
 const elScoreB = document.getElementById('score-b');
+const elCardsA = document.getElementById('cards-a');
+const elCardsB = document.getElementById('cards-b');
 const modal = document.getElementById('game-over');
 const finalScoresEl = document.getElementById('final-scores');
 const restartBtn = document.getElementById('restart-btn');
@@ -582,6 +600,8 @@ function endGame(winner) {
 function updateUI() {
     elScoreA.textContent = scores.a;
     elScoreB.textContent = scores.b;
+    elCardsA.textContent = player1Cards.length;
+    elCardsB.textContent = player2Cards.length;
     elDeck.textContent = `A:${player1Cards.length} B:${player2Cards.length}`;
 }
 
