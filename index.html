@@ -280,6 +280,7 @@ function getSuitColor(suit) {
 
 let currentCard = null;
 let autoAdvanceTimer = null;
+let matchFound = false; // Track if a match exists on current card
 
 function startGame() {
     deck = createDeck();
@@ -289,6 +290,7 @@ function startGame() {
     isProcessing = false;
     gameActive = true;
     gameStarted = !gameStarted; // Toggle game state on each tap
+    matchFound = false;
     
     updateUI();
     modal.style.display = 'none';
@@ -310,6 +312,7 @@ function revealNextCard() {
 
     clearTimeout(autoAdvanceTimer);
     isProcessing = false; // Unlock zones for new card
+    matchFound = false; // Reset match flag for new card
     currentCard = deck.pop();
     const currentCall = CALL_SEQUENCE[callIndex % CALL_SEQUENCE.length];
     
@@ -320,9 +323,17 @@ function revealNextCard() {
     
     callIndex++;
     
-    // Auto-advance to next card after 1.5 seconds
+    // Check if this card is a match
+    const callForThisCard = CALL_SEQUENCE[(callIndex - 1) % CALL_SEQUENCE.length];
+    if (currentCard.rank === callForThisCard) {
+        matchFound = true;
+        // Don't auto-advance if it's a match - wait for player to slap
+        return;
+    }
+    
+    // Auto-advance to next card after 1.5 seconds only if no match
     autoAdvanceTimer = setTimeout(() => {
-        if (gameActive && gameStarted) {
+        if (gameActive && gameStarted && !matchFound) {
             revealNextCard();
         }
     }, 1500);
