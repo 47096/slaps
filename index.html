@@ -268,6 +268,7 @@ function getSuitColor(suit) {
 }
 
 let currentCard = null;
+let autoAdvanceTimer = null;
 
 function startGame() {
     deck = createDeck();
@@ -290,6 +291,7 @@ function revealNextCard() {
         return;
     }
 
+    clearTimeout(autoAdvanceTimer);
     isProcessing = false; // Unlock zones for new card
     currentCard = deck.pop();
     const currentCall = CALL_SEQUENCE[callIndex % CALL_SEQUENCE.length];
@@ -300,6 +302,13 @@ function revealNextCard() {
     elDeck.textContent = deck.length;
     
     callIndex++;
+    
+    // Auto-advance to next card after 1.5 seconds
+    autoAdvanceTimer = setTimeout(() => {
+        if (gameActive) {
+            revealNextCard();
+        }
+    }, 1500);
 }
 
 function resolveTap(player) {
