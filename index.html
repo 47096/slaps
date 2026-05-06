@@ -328,8 +328,6 @@ const zoneA = document.getElementById('zone-a');
 const zoneB = document.getElementById('zone-b');
 const elCard = document.getElementById('card-display');
 const elCall = document.getElementById('current-call');
-const elScoreA = document.getElementById('score-a');
-const elScoreB = document.getElementById('score-b');
 const elCardsA = document.getElementById('cards-a');
 const elCardsB = document.getElementById('cards-b');
 const modal = document.getElementById('game-over');
@@ -530,7 +528,6 @@ function resolveTap(player) {
     isProcessing = true;
 
     const zone = player === 'a' ? zoneA : zoneB;
-    const scoreEl = player === 'a' ? elScoreA : elScoreB;
     
     // Compare tapped rank against the call that was active when this card was revealed
     const callForThisCard = CALL_SEQUENCE[(callIndex - 1) % CALL_SEQUENCE.length];
@@ -605,8 +602,6 @@ function endGame(winner) {
 }
 
 function updateUI() {
-    elScoreA.textContent = scores.a;
-    elScoreB.textContent = scores.b;
     elCardsA.textContent = player1Cards.length;
     elCardsB.textContent = player2Cards.length;
 }

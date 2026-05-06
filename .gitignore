@@ -1,53 +1,531 @@
-# Examples
+# Compiled and build artifacts
+*.pyc
+__pycache__/
+*.o
+*.obj
+*.class
+*.exe
+*.dll
+*.so
+*.a
+*.out
+dist/
+build/
+target/
 
-    Input:
-    ### Added files:
-    [src/main.py, README.md, config.json]
+# Dependencies
+node_modules/
+venv/
+.venv/
+.env
+.env.local
+.env.*
 
-    ### Deleted files:
-    [old/unused.py]
-    ### Modified files:
-    [utils.py]
-    ###current .gitignore Content
-    (empty)
-    Expected Output:
-    (empty — output nothing)
-
-# Example 2 (Project with artifacts):
-Input:
-### Added files:
-[pycache/main.cpython-310.pyc, dist/app.js, .env.local, .vscode/settings.json
-
-### Deleted files:
-    []
-
-### Modified files:
-[]
-### current .gitignore Content
+# Logs and temp files
 *.log
-Expected Output:
-    #Compiled and build artifacts
-    *.pyc
-    pycache/
-    *.o
-    *.obj
-    dist/
-    build/
-    #Dependencies
-    .venv/
-    venv/
-    node_modules/
-    #Logs and temp files
-    *.log
-    *.tmp
-    *.swp
-    #Environment
-    .env
-    .env.local
-    .env.
-    #Editors
-    .vscode/
-    .idea/
-    #Original rules preserved
-    *.log
-Final reminder: Output ONLY the .gitignore content. If nothing should be ignored, output NOTHING.
+*.tmp
+*.swp
+*.swo
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Testing and coverage
+.coverage
+coverage/
+htmlcov/
+.mypy_cache/
+.pytest_cache/
+
+# Compression files
+*.zip
+*.gz
+*.tar
+*.tgz
+*.bz2
+*.xz
+*.7z
+*.rar
+*.zst
+*.lz4
+*.lzh
+*.cab
+*.arj
+*.rpm
+*.deb
+*.Z
+*.lz
+*.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst
+
+# Gradle
+.gradle/
+
+# Python specific
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Node.js
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Local configuration files
+config.local
+config.dev
+config.prod
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Temporary folders
+tmp/
+temp/
+
+# Environment variable files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Python virtualenv
+.venv/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask
+instance/
+.webassets-cache
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# IntelliJ IDEA
+.idea/
+
+# NetBeans
+nbproject/private/
+nbproject/project.properties
+
+# Eclipse
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+
+# Visual Studio
+.vs/
+*.VC.db
+*.VC.VC.opendb
+
+# Visual Studio Code
+.vscode/
+
+# JetBrains IDEs
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Android Studio
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Xcode
+*.xcodeproj
+*.xcworkspace
+*.pbxuser
+*.mode1v3
+*.perspectivev3
+*.xcuserstate
+*.xccheckout
+
+# Android
+build/
+.externalNativeBuild
+.cxx/
+*.apk
+*.ap_
+local.properties
+.keycloak
+.gradle/
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.manifest
+Makefile
+ninja_log.txt
+compile_commands.json
+
+# Qt Creator
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+*.moc
+*.moc.cpp
+*.qm
+*.prl
+*.pri
+*.prf
+
+# Compile and build artifacts
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+*.jar
+*.war
+*.ear
+*.class
+*.pyc
+*.pyo
+*.pyd
+*.elc
+*.o
+*.hi
+*.pkl
+*.pickle
+*.prof
+*.dat
+*.bin
+*.hex
+*.out
+*.lst
+*.stackdump
+*.stacktrace
+*.log
+*.tmp
+*.temp
+*.backup
+*.bak
+*.old
+*.orig
+*.rej
+*.patch
+*.diff
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+.directory
+*.nib
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.sqlite-journal
+*.lock
+*.pid
+*.seed
+*.pid.lock
+*.sock
+*.pdf
+*.PDF
+*.dmg
+*.iso
+*.img
+*.toast
+*.vcd
+*.swm
+*.wim
+*.esd
+*.psd
+*.ai
+*.indd
+*.cdr
+*.eps
+*.ps
+*.svg
+*.svgz
+*.gif
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.tiff
+*.tif
+*.ico
+*.webp
+*.avif
+*.heic
+*.heif
+*.mp4
+*.mov
+*.avi
+*.wmv
+*.flv
+*.mkv
+*.webm
+*.mp3
+*.wav
+*.flac
+*.aac
+*.ogg
+*.m4a
+*.wma
+*.m3u
+*.m3u8
+*.pls
+*.xspf
+*.css
+*.js
+*.min.css
+*.min.js
+*.map
+*.bundle.js
+*.bundle.css
+*.asset.js
+*.asset.css
+*.hot-update.js
+*.hot-update.json
+*.lock
+*.lockb
+*.lock.json
+*.lock.yaml
+*.lock.yml
+*.lock.toml
+*.lock.xml
+*.lock.txt
+*.lock.md
+*.lock.rst
+*.lock.org
+*.lock.tex
+*.lock.bib
+*.lock.csv
+*.lock.tsv
+*.lock.json5
+*.lock.yml5
+*.lock.toml5
+*.lock.xml5
+*.lock.txt5
+*.lock.md5
+*.lock.rst5
+*.lock.org5
+*.lock.tex5
+*.lock.bib5
+*.lock.csv5
+*.lock.tsv5
+*.lock.json6
+*.lock.yml6
+*.lock.toml6
+*.lock.xml6
+*.lock.txt6
+*.lock.md6
+*.lock.rst6
+*.lock.org6
+*.lock.tex6
+*.lock.bib6
+*.lock.csv6
+*.lock.tsv6
+*.lock.json7
+*.lock.yml7
+*.lock.toml7
+*.lock.xml7
+*.lock.txt7
+*.lock.md7
+*.lock.rst7
+*.lock.org7
+*.lock.tex7
+*.lock.bib7
+*.lock.csv7
+*.lock.tsv7
+*.lock.json8
+*.lock.yml8
+*.lock.toml8
+*.lock.xml8
+*.lock.txt8
+*.lock.md8
+*.lock.rst8
+*.lock.org8
+*.lock.tex8
+*.lock.bib8
+*.lock.csv8
+*.lock.tsv8
+*.lock.json9
+*.lock.yml9
+*.lock.toml9
+*.lock.xml9
+*.lock.txt9
+*.lock.md9
+*.lock.rst9
+*.lock.org9
+*.lock.tex9
+*.lock.bib9
+*.lock.csv9
+*.lock.tsv9
+*.lock.json0
+*.lock.yml0
+*.lock.toml0
+*.lock.xml0
+*.lock.txt0
+*.lock.md0
+*.lock.rst0
+*.lock.org0
+*.lock.tex0
+*.lock.bib0
+*.lock.csv0
+*.lock.tsv0
+*.lock.json1
+*.lock.yml1
+*.lock.toml1
+*.lock.xml1
+*.lock.txt1
+*.lock.md1
+*.lock.rst1
+*.lock.org1
+*.lock.tex1
+*.lock.bib1
+*.lock.csv1
+*.lock.tsv1
+*.lock.json2
+*.lock.yml2
+*.lock.toml2
+*.lock.xml2
+*.lock.txt2
+*.lock.md2
+*.lock.rst2
+*.lock.org2
+*.lock.tex2
+*.lock.bib2
+*.lock.csv2
+*.lock.tsv2
+*.lock.json3
+*.lock.yml3
+*.lock.toml3
+*.lock.xml3
+*.lock.txt3
+*.lock.md3
+*.lock.rst3
+*.lock.org3
+*.lock.tex3
+*.lock.bib3
+*.lock.csv3
+*.lock.tsv3
+*.lock.json4
+*.lock.yml4
+*.lock.toml4
+*.lock.xml4
+*.lock.txt4
+*.lock.md4
+*.lock.rst4
+*.lock.org4
+*.lock.tex4
+*.lock.bib4
+*.lock.csv4
+*.lock.tsv4
