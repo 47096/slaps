@@ -240,8 +240,8 @@
     <!-- Center Info Strip -->
     <div id="center-strip">
         <div class="stat-box">
-            <span class="stat-label">Deck</span>
-            <span class="stat-value" id="deck-count">52</span>
+            <span class="stat-label">Cards Left</span>
+            <span class="stat-value" id="deck-count">A:26 B:26</span>
         </div>
         
         <div id="display-area">
@@ -287,6 +287,8 @@ const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 const CALL_SEQUENCE = [...RANKS]; // A through K
 
 let deck = [];
+let player1Cards = [];
+let player2Cards = [];
 let callIndex = 0;
 let scores = { a: 0, b: 0 };
 let isProcessing = false; // Lock state for card resolution
@@ -386,10 +388,19 @@ function vibrateDevice(pattern = [50]) {
     }
 }
 
+// Global variable to track the pile of cards in play
+let cardsInPlay = [];
+
 function startGame() {
     deck = createDeck();
+    // Split deck 50/50 between players
+    const half = Math.floor(deck.length / 2);
+    player1Cards = deck.slice(0, half);
+    player2Cards = deck.slice(half);
+    
     callIndex = 0;
     currentCard = null;
+    cardsInPlay = []; // Reset cards in play
     scores = { a: 0, b: 0 };
     isProcessing = false;
     gameActive = true;
@@ -412,15 +423,30 @@ function startGame() {
 }
 
 function revealNextCard() {
-    if (deck.length === 0) {
-        endGame();
+    // Check win condition: whoever finishes all their cards wins
+    if (player1Cards.length === 0) {
+        endGame('a');
+        return;
+    }
+    if (player2Cards.length === 0) {
+        endGame('b');
         return;
     }
 
     clearTimeout(autoAdvanceTimer);
     isProcessing = false; // Unlock zones for new card
     matchFound = false; // Reset match flag for new card
-    currentCard = deck.pop();
+    
+    // Alternate between players: Player A (index even), Player B (index odd)
+    if (callIndex % 2 === 0) {
+        currentCard = player1Cards.pop();
+    } else {
+        currentCard = player2Cards.pop();
+    }
+    
+    // Add the current card to the pile in play
+    cardsInPlay.push(currentCard);
+    
     const currentCall = CALL_SEQUENCE[callIndex % CALL_SEQUENCE.length];
     
     // Render card with poker-style layout
@@ -437,7 +463,8 @@ function revealNextCard() {
     `;
     elCard.className = getSuitColor(currentCard.suit);
     elCall.textContent = currentCall;
-    elDeck.textContent = deck.length;
+    // Show remaining cards for each player and cards in play
+    elDeck.textContent = `A:${player1Cards.length} B:${player2Cards.length} Pile:${cardsInPlay.length}`;
     
     callIndex++;
     
@@ -446,6 +473,22 @@ function revealNextCard() {
     if (currentCard.rank === callForThisCard) {
         matchFound = true;
         // Don't auto-advance if it's a match - wait for player to slap
+        // Set a timeout: if no one slaps within 3 seconds, the current player takes the pile
+        autoAdvanceTimer = setTimeout(() => {
+            if (gameActive && gameStarted && matchFound) {
+                // No one slapped in time - the player who played this card takes the pile
+                const shuffledPile = shuffle(cardsInPlay);
+                if (callIndex % 2 === 1) {
+                    // Player A played this card (since callIndex was incremented after playing)
+                    player1Cards.push(...shuffledPile);
+                } else {
+                    player2Cards.push(...shuffledPile);
+                }
+                cardsInPlay = [];
+                matchFound = false;
+                revealNextCard();
+            }
+        }, 3000);
         return;
     }
     
@@ -468,40 +511,70 @@ function resolveTap(player) {
     const callForThisCard = CALL_SEQUENCE[(callIndex - 1) % CALL_SEQUENCE.length];
     let isMatch = (currentCard.rank === callForThisCard);
 
-    let points = isMatch ? 1 : -1;
-    
     // Play slap sound and vibrate on every tap
     playSlapSound();
     vibrateDevice([30]); // Short vibration for tap
     
     if (isMatch) {
+        // Correct slap! Player wins all cards in the pile
         zone.classList.add('feedback-success');
         // Extra vibration for successful match
         vibrateDevice([50, 30, 50]);
+        
+        // Add all cards from the pile to the winner's deck
+        // Shuffle them first for fairness
+        const shuffledPile = shuffle(cardsInPlay);
+        if (player === 'a') {
+            player1Cards.push(...shuffledPile);
+        } else {
+            player2Cards.push(...shuffledPile);
+        }
+        cardsInPlay = []; // Clear the pile
+        
+        // Wait for feedback then reveal next card
+        setTimeout(() => {
+            zone.classList.remove('feedback-success', 'feedback-fail');
+            revealNextCard();
+        }, 800);
+        return;
     } else {
+        // Wrong slap! Player takes all cards in the pile as penalty
         zone.classList.add('feedback-fail');
         // Different vibration pattern for fail
         vibrateDevice([100]);
+        
+        // Add all cards from the pile to the failing player's deck
+        const shuffledPile = shuffle(cardsInPlay);
+        if (player === 'a') {
+            player1Cards.push(...shuffledPile);
+        } else {
+            player2Cards.push(...shuffledPile);
+        }
+        cardsInPlay = []; // Clear the pile
+        
+        // Wait for feedback then reveal next card
+        setTimeout(() => {
+            zone.classList.remove('feedback-success', 'feedback-fail');
+            revealNextCard();
+        }, 800);
+        return;
     }
-
-    scores[player] += points;
-    scoreEl.textContent = scores[player];
-
-    // Wait for feedback then advance
-    setTimeout(() => {
-        zone.classList.remove('feedback-success', 'feedback-fail');
-        revealNextCard();
-    }, 800);
 }
 
-function endGame() {
+function endGame(winner) {
     gameActive = false;
+    let winnerText = '';
+    if (winner === 'a') {
+        winnerText = '<span style="color:#27ae60">Player A Wins!</span>';
+    } else if (winner === 'b') {
+        winnerText = '<span style="color:#27ae60">Player B Wins!</span>';
+    } else {
+        winnerText = '<span style="color:#f1c40f">Draw!</span>';
+    }
     finalScoresEl.innerHTML = `
-        Player A: ${scores.a}<br>
-        Player B: ${scores.b}<br>
-        ${scores.a > scores.b ? '<span style="color:#27ae60">Player A Wins!</span>' : 
-          scores.b > scores.a ? '<span style="color:#27ae60">Player B Wins!</span>' : 
-          '<span style="color:#f1c40f">Draw!</span>'}
+        Player A cards left: ${player1Cards.length}<br>
+        Player B cards left: ${player2Cards.length}<br>
+        ${winnerText}
     `;
     modal.style.display = 'flex';
 }
@@ -509,7 +582,7 @@ function endGame() {
 function updateUI() {
     elScoreA.textContent = scores.a;
     elScoreB.textContent = scores.b;
-    elDeck.textContent = deck.length;
+    elDeck.textContent = `A:${player1Cards.length} B:${player2Cards.length}`;
 }
 
 /**
