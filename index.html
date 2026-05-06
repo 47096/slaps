@@ -269,30 +269,17 @@
     <div id="zone-a" class="player-zone">
         <div class="player-label">Player A</div>
         <div class="stat-box">
-            <span class="stat-label" style="color: rgba(255,255,255,0.5); font-size: 0.6rem;">Cards</span>
+            <span class="stat-label" style="color: rgba(255,255,255,0.5); font-size: 0.6rem;">Cards Left</span>
             <span class="stat-value" style="color: rgba(255,255,255,0.9); font-size: 1.2rem;" id="cards-a">26</span>
         </div>
     </div>
 
     <!-- Center Info Strip -->
     <div id="center-strip">
-        <div class="stat-box">
-            <span class="stat-label">Cards Left</span>
-            <span class="stat-value" id="deck-count">A:26 B:26</span>
-        </div>
-        
         <div id="display-area">
             <div id="call-display">CALLING: <span id="current-call">A</span></div>
             <div id="card-display">
                 <div class="card-back-pattern"></div>
-            </div>
-        </div>
-
-        <div class="stat-box">
-            <span class="stat-label">Scores</span>
-            <div style="display:flex; gap:10px;">
-                <span style="color:#3498db">A:<span id="score-a">0</span></span>
-                <span style="color:#e67e22">B:<span id="score-b">0</span></span>
             </div>
         </div>
     </div>
@@ -301,7 +288,7 @@
     <div id="zone-b" class="player-zone">
         <div class="player-label">Player B</div>
         <div class="stat-box">
-            <span class="stat-label" style="color: rgba(255,255,255,0.5); font-size: 0.6rem;">Cards</span>
+            <span class="stat-label" style="color: rgba(255,255,255,0.5); font-size: 0.6rem;">Cards Left</span>
             <span class="stat-value" style="color: rgba(255,255,255,0.9); font-size: 1.2rem;" id="cards-b">26</span>
         </div>
     </div>
@@ -341,7 +328,6 @@ const zoneA = document.getElementById('zone-a');
 const zoneB = document.getElementById('zone-b');
 const elCard = document.getElementById('card-display');
 const elCall = document.getElementById('current-call');
-const elDeck = document.getElementById('deck-count');
 const elScoreA = document.getElementById('score-a');
 const elScoreB = document.getElementById('score-b');
 const elCardsA = document.getElementById('cards-a');
@@ -506,8 +492,6 @@ function revealNextCard() {
     `;
     elCard.className = getSuitColor(currentCard.suit);
     elCall.textContent = currentCall;
-    // Show remaining cards for each player and cards in play
-    elDeck.textContent = `A:${player1Cards.length} B:${player2Cards.length} Pile:${cardsInPlay.length}`;
     
     callIndex++;
     
@@ -627,7 +611,6 @@ function updateUI() {
     elScoreB.textContent = scores.b;
     elCardsA.textContent = player1Cards.length;
     elCardsB.textContent = player2Cards.length;
-    elDeck.textContent = `A:${player1Cards.length} B:${player2Cards.length}`;
 }
 
 /**
