@@ -115,6 +115,16 @@
             justify-content: center;
             align-items: center;
             margin: 0 10px;
+            cursor: pointer;
+        }
+
+        #display-area.paused {
+            opacity: 0.7;
+        }
+
+        #display-area.paused #card-display {
+            box-shadow: 0 0 20px rgba(39, 174, 96, 0.8);
+            border-color: #27ae60;
         }
 
         #call-display {
@@ -227,6 +237,7 @@ let callIndex = 0;
 let scores = { a: 0, b: 0 };
 let isProcessing = false; // Lock state for card resolution
 let gameActive = false;
+let gameStarted = false;
 
 // DOM Elements
 const zoneA = document.getElementById('zone-a');
@@ -277,12 +288,18 @@ function startGame() {
     scores = { a: 0, b: 0 };
     isProcessing = false;
     gameActive = true;
+    gameStarted = !gameStarted; // Toggle game state on each tap
     
     updateUI();
     modal.style.display = 'none';
     
-    // Reveal first card after short delay
-    setTimeout(revealNextCard, 500);
+    if (gameStarted) {
+        // Start the game - reveal first card after short delay
+        setTimeout(revealNextCard, 500);
+    } else {
+        // Stop the game - clear timer
+        clearTimeout(autoAdvanceTimer);
+    }
 }
 
 function revealNextCard() {
@@ -305,7 +322,7 @@ function revealNextCard() {
     
     // Auto-advance to next card after 1.5 seconds
     autoAdvanceTimer = setTimeout(() => {
-        if (gameActive) {
+        if (gameActive && gameStarted) {
             revealNextCard();
         }
     }, 1500);
@@ -379,14 +396,37 @@ function attachTouchZone(element, player) {
 attachTouchZone(zoneA, 'a');
 attachTouchZone(zoneB, 'b');
 
+// Add tap handler to center display area to start/stop game
+const displayArea = document.getElementById('display-area');
+displayArea.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    startGame();
+    updateDisplayVisual();
+}, { passive: false });
+
+displayArea.addEventListener('mousedown', (e) => {
+    startGame();
+    updateDisplayVisual();
+});
+
 restartBtn.addEventListener('click', startGame);
 restartBtn.addEventListener('touchstart', (e) => {
     e.preventDefault();
     startGame();
+    updateDisplayVisual();
 });
 
-// Init
-startGame();
+function updateDisplayVisual() {
+    if (gameStarted) {
+        displayArea.classList.remove('paused');
+    } else {
+        displayArea.classList.add('paused');
+    }
+}
+
+// Init - start in paused state
+gameStarted = false;
+updateDisplayVisual();
 
 </script>
 </body>
