@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+    <meta charset="UTF-8">
+    <!-- iOS Safari viewport lock: prevents zoom, scroll, and scaling -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>衾棉胎 (Modified)</title>
+    <style>
+        /* Reset & Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent; /* Disable iOS grey tap highlight */
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Prevent bounce/scroll */
+            background-color: #1a1a1a;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            touch-action: none; /* Critical: disables browser handling of gestures */
+        }
+
+        /* Layout Container */
+        #game-container {
+            display: flex;
+            flex-direction: column;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Player Zones */
+        .player-zone {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transition: background-color 0.1s ease;
+        }
+
+        #zone-a {
+            background-color: #2c3e50;
+            border-bottom: 2px solid #000;
+        }
+
+        #zone-b {
+            background-color: #2c3e50;
+            border-top: 2px solid #000;
+        }
+
+        /* Feedback Colors */
+        .feedback-success {
+            background-color: #27ae60 !important; /* Green */
+        }
+
+        .feedback-fail {
+            background-color: #c0392b !important; /* Red */
+        }
+
+        /* Labels */
+        .player-label {
+            font-size: 2rem;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+
+        /* Center Strip */
+        #center-strip {
+            height: 140px;
+            background-color: #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            z-index: 10;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+        }
+
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 60px;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: #7f8c8d;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        #display-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 10px;
+        }
+
+        #call-display {
+            font-size: 1rem;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        #card-display {
+            width: 70px;
+            height: 100px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            border: 2px solid #bdc3c7;
+        }
+
+        .suit-red { color: #e74c3c !important; }
+        .suit-black { color: #2c3e50 !important; }
+
+        /* Game Over Modal */
+        #game-over {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            color: white;
+        }
+
+        #game-over h1 { font-size: 3rem; margin-bottom: 20px; }
+        #final-scores { font-size: 1.5rem; margin-bottom: 30px; text-align: center; line-height: 1.5; }
+        
+        button {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
+        }
+        button:active { transform: scale(0.95); }
+
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <!-- Player A Zone (Top) -->
+    <div id="zone-a" class="player-zone">
+        <div class="player-label">Player A</div>
+    </div>
+
+    <!-- Center Info Strip -->
+    <div id="center-strip">
+        <div class="stat-box">
+            <span class="stat-label">Deck</span>
+            <span class="stat-value" id="deck-count">52</span>
+        </div>
+        
+        <div id="display-area">
+            <div id="call-display">CALLING: <span id="current-call">A</span></div>
+            <div id="card-display">?</div>
+        </div>
+
+        <div class="stat-box">
+            <span class="stat-label">Scores</span>
+            <div style="display:flex; gap:10px;">
+                <span style="color:#3498db">A:<span id="score-a">0</span></span>
+                <span style="color:#e67e22">B:<span id="score-b">0</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Player B Zone (Bottom) -->
+    <div id="zone-b" class="player-zone">
+        <div class="player-label">Player B</div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="game-over">
+        <h1>Game Over</h1>
+        <div id="final-scores"></div>
+        <button id="restart-btn">Play Again</button>
+    </div>
+</div>
+
+<script>
+/**
+ * GAME STATE & CONFIGURATION
+ */
+const SUITS = ['♠', '♥', '♣', '♦'];
+const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+const CALL_SEQUENCE = [...RANKS]; // A through K
+
+let deck = [];
+let callIndex = 0;
+let scores = { a: 0, b: 0 };
+let isProcessing = false; // Lock state for card resolution
+let gameActive = false;
+
+// DOM Elements
+const zoneA = document.getElementById('zone-a');
+const zoneB = document.getElementById('zone-b');
+const elCard = document.getElementById('card-display');
+const elCall = document.getElementById('current-call');
+const elDeck = document.getElementById('deck-count');
+const elScoreA = document.getElementById('score-a');
+const elScoreB = document.getElementById('score-b');
+const modal = document.getElementById('game-over');
+const finalScoresEl = document.getElementById('final-scores');
+const restartBtn = document.getElementById('restart-btn');
+
+/**
+ * CORE LOGIC
+ */
+
+// Fisher-Yates Shuffle
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function createDeck() {
+    let newDeck = [];
+    for (let s of SUITS) {
+        for (let r of RANKS) {
+            newDeck.push({ suit: s, rank: r });
+        }
+    }
+    return shuffle(newDeck);
+}
+
+function getSuitColor(suit) {
+    return (suit === '♥' || suit === '♦') ? 'suit-red' : 'suit-black';
+}
+
+let currentCard = null;
+
+function startGame() {
+    deck = createDeck();
+    callIndex = 0;
+    currentCard = null;
+    scores = { a: 0, b: 0 };
+    isProcessing = false;
+    gameActive = true;
+    
+    updateUI();
+    modal.style.display = 'none';
+    
+    // Reveal first card after short delay
+    setTimeout(revealNextCard, 500);
+}
+
+function revealNextCard() {
+    if (deck.length === 0) {
+        endGame();
+        return;
+    }
+
+    isProcessing = false; // Unlock zones for new card
+    currentCard = deck.pop();
+    const currentCall = CALL_SEQUENCE[callIndex % CALL_SEQUENCE.length];
+    
+    elCard.textContent = currentCard.suit + currentCard.rank;
+    elCard.className = getSuitColor(currentCard.suit);
+    elCall.textContent = currentCall;
+    elDeck.textContent = deck.length;
+    
+    callIndex++;
+}
+
+function resolveTap(player) {
+    if (!gameActive || isProcessing) return;
+    isProcessing = true;
+
+    const zone = player === 'a' ? zoneA : zoneB;
+    const scoreEl = player === 'a' ? elScoreA : elScoreB;
+    
+    // Compare tapped rank against the call that was active when this card was revealed
+    const callForThisCard = CALL_SEQUENCE[(callIndex - 1) % CALL_SEQUENCE.length];
+    let isMatch = (currentCard.rank === callForThisCard);
+
+    let points = isMatch ? 1 : -1;
+    
+    if (isMatch) {
+        zone.classList.add('feedback-success');
+    } else {
+        zone.classList.add('feedback-fail');
+    }
+
+    scores[player] += points;
+    scoreEl.textContent = scores[player];
+
+    // Wait for feedback then advance
+    setTimeout(() => {
+        zone.classList.remove('feedback-success', 'feedback-fail');
+        revealNextCard();
+    }, 800);
+}
+
+function endGame() {
+    gameActive = false;
+    finalScoresEl.innerHTML = `
+        Player A: ${scores.a}<br>
+        Player B: ${scores.b}<br>
+        ${scores.a > scores.b ? '<span style="color:#27ae60">Player A Wins!</span>' : 
+          scores.b > scores.a ? '<span style="color:#27ae60">Player B Wins!</span>' : 
+          '<span style="color:#f1c40f">Draw!</span>'}
+    `;
+    modal.style.display = 'flex';
+}
+
+function updateUI() {
+    elScoreA.textContent = scores.a;
+    elScoreB.textContent = scores.b;
+    elDeck.textContent = deck.length;
+}
+
+/**
+ * EVENT LISTENERS (iOS OPTIMISED)
+ */
+
+// Use touchstart for instant response. 
+// e.preventDefault() prevents mouse emulation and scrolling/zooming.
+function attachTouchZone(element, player) {
+    element.addEventListener('touchstart', (e) => {
+        e.preventDefault(); // Stop zoom/scroll/default actions
+        resolveTap(player);
+    }, { passive: false });
+
+    // Fallback for desktop testing with mouse
+    element.addEventListener('mousedown', (e) => {
+        resolveTap(player);
+    });
+}
+
+attachTouchZone(zoneA, 'a');
+attachTouchZone(zoneB, 'b');
+
+restartBtn.addEventListener('click', startGame);
+restartBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    startGame();
+});
+
+// Init
+startGame();
+
+</script>
+</body>
+</html>
