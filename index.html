@@ -469,6 +469,9 @@ function revealNextCard() {
         currentCard = player2Cards.pop();
     }
     
+    // Update UI to reflect card count change after popping
+    updateUI();
+    
     // Add the current card to the pile in play
     cardsInPlay.push(currentCard);
     
@@ -509,6 +512,7 @@ function revealNextCard() {
                 }
                 cardsInPlay = [];
                 matchFound = false;
+                updateUI(); // Update card counts
                 revealNextCard();
             }
         }, 3000);
@@ -552,6 +556,7 @@ function resolveTap(player) {
             player2Cards.push(...shuffledPile);
         }
         cardsInPlay = []; // Clear the pile
+        updateUI(); // Update card counts
         
         // Wait for feedback then reveal next card
         setTimeout(() => {
@@ -573,6 +578,7 @@ function resolveTap(player) {
             player2Cards.push(...shuffledPile);
         }
         cardsInPlay = []; // Clear the pile
+        updateUI(); // Update card counts
         
         // Wait for feedback then reveal next card
         setTimeout(() => {
