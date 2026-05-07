@@ -289,7 +289,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            font-size: clamp(0.7rem, 2vw, 1rem);
+            font-size: clamp(1rem, 2.5vw, 1.4rem);
             line-height: 1;
             font-weight: 900;
         }
@@ -584,8 +584,8 @@ function startGame() {
     initAudio();
     
     // Reset call displays
-    elCallTop.textContent = '-';
-    elCallBottom.textContent = '-';
+    elCallTop.textContent = 'A';
+    elCallBottom.textContent = 'A';
     
     updateUI();
     modal.style.display = 'none';
@@ -635,12 +635,12 @@ function revealNextCard() {
     elCard.innerHTML = `
         <div class="card-corner top-left">
             <span>${currentCard.rank}</span>
-            <span style="font-size: 0.65em">${currentCard.suit}</span>
+            <span style="font-size: 0.8em">${currentCard.suit}</span>
         </div>
         <div class="card-center-suit">${currentCard.suit}</div>
         <div class="card-corner bottom-right">
             <span>${currentCard.rank}</span>
-            <span style="font-size: 0.65em">${currentCard.suit}</span>
+            <span style="font-size: 0.8em">${currentCard.suit}</span>
         </div>
     `;
     elCard.className = getSuitColor(currentCard.suit);
