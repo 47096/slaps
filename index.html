@@ -94,11 +94,15 @@
 
         /* Feedback Colors */
         .feedback-success {
-            background-color: #27ae60 !important; /* Green */
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%) !important; /* Green gradient */
         }
 
         .feedback-fail {
-            background-color: #c0392b !important; /* Red */
+            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%) !important; /* Red gradient */
+        }
+
+        .feedback-nearmiss {
+            background: linear-gradient(135deg, #f39c12 0%, #f1c40f 100%) !important; /* Amber/Yellow gradient */
         }
 
         /* ====================
@@ -549,6 +553,15 @@ function resolveTap(player) {
     // Compare tapped rank against the call that was active when this card was revealed
     const callForThisCard = CALL_SEQUENCE[(callIndex - 1) % CALL_SEQUENCE.length];
     let isMatch = (currentCard.rank === callForThisCard);
+    
+    // Check for near miss: card rank is within 1 of the call
+    const callIndexNum = RANKS.indexOf(callForThisCard);
+    const cardIndexNum = RANKS.indexOf(currentCard.rank);
+    let isNearMiss = false;
+    if (callIndexNum >= 0 && cardIndexNum >= 0) {
+        const diff = Math.abs(callIndexNum - cardIndexNum);
+        isNearMiss = (diff === 1); // One rank away = near miss
+    }
 
     // Play slap sound and vibrate on every tap
     playSlapSound();
@@ -576,7 +589,30 @@ function resolveTap(player) {
         
         // Wait for feedback then reveal next card
         setTimeout(() => {
-            zone.classList.remove('feedback-success', 'feedback-fail');
+            zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+            revealNextCard();
+        }, 800);
+        return;
+    } else if (isNearMiss) {
+        // Near miss! Show amber/yellow feedback but still penalize
+        zone.classList.add('feedback-nearmiss');
+        // Medium vibration for near miss
+        vibrateDevice([70]);
+        
+        // Add all cards from the pile to the failing player's deck (same as wrong slap)
+        const shuffledPile = shuffle(cardsInPlay);
+        if (player === 'a') {
+            player1Cards.push(...shuffledPile);
+        } else {
+            player2Cards.push(...shuffledPile);
+        }
+        cardsInPlay = []; // Clear the pile
+        totalCardsDealt = 0; // Reset cards dealt counter
+        updateUI(); // Update card counts
+        
+        // Wait for feedback then reveal next card
+        setTimeout(() => {
+            zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
             revealNextCard();
         }, 800);
         return;
@@ -599,7 +635,7 @@ function resolveTap(player) {
         
         // Wait for feedback then reveal next card
         setTimeout(() => {
-            zone.classList.remove('feedback-success', 'feedback-fail');
+            zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
             revealNextCard();
         }, 800);
         return;
