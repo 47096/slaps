@@ -101,12 +101,40 @@
             flex: 1;
             background-color: #ecf0f1;
             display: flex;
+            flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 0 15px;
+            padding: 10px 15px;
             z-index: 10;
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
             flex-shrink: 0;
+        }
+
+        .info-bar {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #7f8c8d;
+            padding: 5px 0;
+        }
+
+        .info-bar span {
+            color: #2c3e50;
+            font-size: 1rem;
+            margin-left: 5px;
+        }
+
+        .top-info-bar {
+            border-bottom: 1px solid #bdc3c7;
+            margin-bottom: 5px;
+        }
+
+        .bottom-info-bar {
+            border-top: 1px solid #bdc3c7;
+            margin-top: 5px;
         }
 
         /* Feedback Colors */
@@ -199,12 +227,6 @@
             50% {
                 box-shadow: 0 0 35px rgba(192, 57, 43, 1);
             }
-        }
-
-        #call-display {
-            font-size: 1rem;
-            color: #7f8c8d;
-            margin-bottom: 5px;
         }
 
         #card-display {
@@ -323,13 +345,13 @@
          (Middle section where cards are displayed)
          ==================== -->
     <div id="center-strip">
+        <div class="info-bar top-info-bar">Calling: <span id="top-call-display">A</span></div>
         <div id="display-area">
-            <div id="call-display">CALLING: <span id="current-call">A</span></div>
             <div id="card-display">
                 <div class="card-back-pattern"></div>
             </div>
-            <div id="cards-dealt-display" style="margin-top: 8px; font-size: 0.9rem; color: #7f8c8d; font-weight: 600;">Cards Dealt: <span id="cards-dealt-count" style="color: #2c3e50; font-size: 1.1rem;">0</span></div>
         </div>
+        <div class="info-bar bottom-info-bar">Cards Dealt: <span id="bottom-cards-dealt">0</span></div>
     </div>
 
     <!-- ====================
@@ -380,10 +402,10 @@ let gamePaused = false; // Track if game is paused for validation
 const zoneA = document.getElementById('zone-a');
 const zoneB = document.getElementById('zone-b');
 const elCard = document.getElementById('card-display');
-const elCall = document.getElementById('current-call');
+const elCallTop = document.getElementById('top-call-display');
+const elCardsDealtBottom = document.getElementById('bottom-cards-dealt');
 const elCardsA = document.getElementById('cards-a');
 const elCardsB = document.getElementById('cards-b');
-const elCardsDealt = document.getElementById('cards-dealt-count');
 const modal = document.getElementById('game-over');
 const finalScoresEl = document.getElementById('final-scores');
 const restartBtn = document.getElementById('restart-btn');
@@ -576,7 +598,7 @@ function revealNextCard() {
         </div>
     `;
     elCard.className = getSuitColor(currentCard.suit);
-    elCall.textContent = currentCall;
+    elCallTop.textContent = currentCall;
     
     callIndex++;
     
@@ -746,7 +768,7 @@ function updateUI() {
     elCardsA.textContent = player1Cards.length;
     elCardsB.textContent = player2Cards.length;
     // Use the tracked total cards dealt counter
-    elCardsDealt.textContent = totalCardsDealt;
+    elCardsDealtBottom.textContent = totalCardsDealt;
 }
 
 /**
