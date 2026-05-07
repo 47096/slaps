@@ -281,6 +281,7 @@
             <div id="card-display">
                 <div class="card-back-pattern"></div>
             </div>
+            <div id="cards-dealt-display" style="margin-top: 8px; font-size: 0.9rem; color: #7f8c8d; font-weight: 600;">Cards Dealt: <span id="cards-dealt-count" style="color: #2c3e50; font-size: 1.1rem;">0</span></div>
         </div>
     </div>
 
@@ -330,6 +331,7 @@ const elCard = document.getElementById('card-display');
 const elCall = document.getElementById('current-call');
 const elCardsA = document.getElementById('cards-a');
 const elCardsB = document.getElementById('cards-b');
+const elCardsDealt = document.getElementById('cards-dealt-count');
 const modal = document.getElementById('game-over');
 const finalScoresEl = document.getElementById('final-scores');
 const restartBtn = document.getElementById('restart-btn');
@@ -612,6 +614,9 @@ function endGame(winner) {
 function updateUI() {
     elCardsA.textContent = player1Cards.length;
     elCardsB.textContent = player2Cards.length;
+    // Calculate cards dealt: total deck (52) minus cards in players' hands plus cards in play pile
+    const cardsDealt = 52 - player1Cards.length - player2Cards.length + cardsInPlay.length;
+    elCardsDealt.textContent = cardsDealt;
 }
 
 /**
