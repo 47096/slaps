@@ -542,18 +542,20 @@ function resolveTap(player) {
     vibrateDevice([30]); // Short vibration for tap
     
     if (isMatch) {
-        // Correct slap! Player wins all cards in the pile
+        // Correct slap! The OTHER player takes all cards in the pile as penalty
         zone.classList.add('feedback-success');
         // Extra vibration for successful match
         vibrateDevice([50, 30, 50]);
         
-        // Add all cards from the pile to the winner's deck
+        // Add all cards from the pile to the OTHER player's deck (penalty)
         // Shuffle them first for fairness
         const shuffledPile = shuffle(cardsInPlay);
         if (player === 'a') {
-            player1Cards.push(...shuffledPile);
-        } else {
+            // Player A slapped correctly, so Player B takes the pile
             player2Cards.push(...shuffledPile);
+        } else {
+            // Player B slapped correctly, so Player A takes the pile
+            player1Cards.push(...shuffledPile);
         }
         cardsInPlay = []; // Clear the pile
         updateUI(); // Update card counts
