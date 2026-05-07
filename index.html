@@ -52,6 +52,10 @@
             transition: background-color 0.1s ease;
         }
 
+        .player-zone.tapped {
+            background-color: #c0392b !important; /* Red background on tap */
+        }
+
         /* Player A Zone - TOP SCREEN (rotated upside down) */
         #zone-a {
             background-color: #2c3e50;
@@ -709,12 +713,30 @@ function updateUI() {
 function attachTouchZone(element, player) {
     element.addEventListener('touchstart', (e) => {
         e.preventDefault(); // Stop zoom/scroll/default actions
+        // Add red background feedback
+        element.classList.add('tapped');
         resolveTap(player);
+    }, { passive: false });
+    
+    // Remove red background when touch ends
+    element.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        element.classList.remove('tapped');
     }, { passive: false });
 
     // Fallback for desktop testing with mouse
     element.addEventListener('mousedown', (e) => {
+        // Add red background feedback
+        element.classList.add('tapped');
         resolveTap(player);
+    });
+    
+    element.addEventListener('mouseup', (e) => {
+        element.classList.remove('tapped');
+    });
+    
+    element.addEventListener('mouseleave', (e) => {
+        element.classList.remove('tapped');
     });
 }
 
