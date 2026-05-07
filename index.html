@@ -532,6 +532,10 @@ function revealNextCard() {
     isProcessing = false; // Unlock zones for new card
     matchFound = false; // Reset match flag for new card
     
+    // Remove any feedback classes from both zones before revealing new card
+    zoneA.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+    zoneB.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+    
     // Alternate between players: Player A (index even), Player B (index odd)
     if (callIndex % 2 === 0) {
         currentCard = player1Cards.pop();
@@ -573,6 +577,9 @@ function revealNextCard() {
         matchFound = true;
         // Vibrate to hint that this is a matching card
         vibrateDevice([30, 50, 30]);
+        // Apply green growing effect to both player zones
+        zoneA.classList.add('feedback-success');
+        zoneB.classList.add('feedback-success');
         // Don't auto-advance if it's a match - wait for player to slap
         // Set a timeout: if no one slaps within 3 seconds, the current player takes the pile
         autoAdvanceTimer = setTimeout(() => {
@@ -587,6 +594,9 @@ function revealNextCard() {
                 }
                 cardsInPlay = [];
                 matchFound = false;
+                // Remove green growing effect
+                zoneA.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+                zoneB.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
                 updateUI(); // Update card counts
                 
                 // Pause the game for validation - wait for player to tap center to resume
@@ -601,6 +611,9 @@ function revealNextCard() {
     // Auto-advance to next card after 1.5 seconds only if no match
     autoAdvanceTimer = setTimeout(() => {
         if (gameActive && gameStarted && !matchFound && !gamePaused) {
+            // Remove any feedback classes from both zones before revealing next card
+            zoneA.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+            zoneB.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
             revealNextCard();
         }
     }, 1500);
@@ -655,8 +668,13 @@ function resolveTap(player) {
         // Pause the game for validation - wait for player to tap center to resume
         gamePaused = true;
         displayArea.classList.add('paused');
-        displayArea.classList.add('wrong-slap');
-        zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+        // Don't add wrong-slap for correct matches - keep green feedback
+        // Remove green growing effect from both zones after a short delay
+        setTimeout(() => {
+            zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+            zoneA.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+            zoneB.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+        }, 300);
         return;
     } else if (isNearMiss) {
         // Near miss! Show amber/yellow feedback but still penalize
@@ -680,7 +698,12 @@ function resolveTap(player) {
         gamePaused = true;
         displayArea.classList.add('paused');
         displayArea.classList.add('wrong-slap');
-        zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+        // Remove feedback from both zones after a short delay
+        setTimeout(() => {
+            zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+            zoneA.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+            zoneB.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+        }, 300);
         return;
     } else {
         // Wrong slap! Player takes all cards in the pile as penalty
@@ -704,7 +727,12 @@ function resolveTap(player) {
         gamePaused = true;
         displayArea.classList.add('paused');
         displayArea.classList.add('wrong-slap');
-        zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+        // Remove feedback from both zones after a short delay
+        setTimeout(() => {
+            zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+            zoneA.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+            zoneB.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+        }, 300);
         return;
     }
 }
