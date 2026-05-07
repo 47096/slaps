@@ -505,6 +505,8 @@ function revealNextCard() {
     const callForThisCard = CALL_SEQUENCE[(callIndex - 1) % CALL_SEQUENCE.length];
     if (currentCard.rank === callForThisCard) {
         matchFound = true;
+        // Vibrate to hint that this is a matching card
+        vibrateDevice([30, 50, 30]);
         // Don't auto-advance if it's a match - wait for player to slap
         // Set a timeout: if no one slaps within 3 seconds, the current player takes the pile
         autoAdvanceTimer = setTimeout(() => {
@@ -565,6 +567,7 @@ function resolveTap(player) {
             player1Cards.push(...shuffledPile);
         }
         cardsInPlay = []; // Clear the pile
+        totalCardsDealt = 0; // Reset cards dealt counter
         updateUI(); // Update card counts
         
         // Wait for feedback then reveal next card
@@ -587,6 +590,7 @@ function resolveTap(player) {
             player2Cards.push(...shuffledPile);
         }
         cardsInPlay = []; // Clear the pile
+        totalCardsDealt = 0; // Reset cards dealt counter
         updateUI(); // Update card counts
         
         // Wait for feedback then reveal next card
