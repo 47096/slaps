@@ -749,11 +749,13 @@ function updateUI() {
 function attachTouchZone(element, player) {
     element.addEventListener('touchstart', (e) => {
         e.preventDefault(); // Stop zoom/scroll/default actions
+        initAudio(); // Ensure audio is initialized
         resolveTap(player);
     }, { passive: false });
 
     // Fallback for desktop testing with mouse
     element.addEventListener('mousedown', (e) => {
+        initAudio(); // Ensure audio is initialized
         resolveTap(player);
     });
 }
