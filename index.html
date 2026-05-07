@@ -666,6 +666,7 @@ function resolveTap(player) {
         // Pause the game for validation - wait for player to tap center to resume
         gamePaused = true;
         displayArea.classList.add('paused');
+        displayArea.classList.add('wrong-slap');
         zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
         return;
     } else {
@@ -689,6 +690,7 @@ function resolveTap(player) {
         // Pause the game for validation - wait for player to tap center to resume
         gamePaused = true;
         displayArea.classList.add('paused');
+        displayArea.classList.add('wrong-slap');
         zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
         return;
     }
