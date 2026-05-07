@@ -81,7 +81,7 @@
             top: 0;
             left: 0;
             right: 0;
-            height: calc(50vh - 90px);
+            height: calc(100vh / 3);
         }
 
         /* Player B Zone - BOTTOM SCREEN (normal orientation) */
@@ -93,7 +93,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: calc(50vh - 90px);
+            height: calc(100vh / 3);
         }
 
         /* Consistent label ordering for both zones */
@@ -119,11 +119,10 @@
             z-index: 10;
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
             position: absolute;
-            top: 50%;
+            top: calc(100vh / 3);
             left: 0;
             right: 0;
-            transform: translateY(-50%);
-            height: 180px;
+            height: calc(100vh / 3);
         }
 
         .info-bar {
