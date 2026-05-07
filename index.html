@@ -577,9 +577,6 @@ function revealNextCard() {
         matchFound = true;
         // Vibrate to hint that this is a matching card
         vibrateDevice([30, 50, 30]);
-        // Apply green growing effect to both player zones
-        zoneA.classList.add('feedback-success');
-        zoneB.classList.add('feedback-success');
         // Don't auto-advance if it's a match - wait for player to slap
         // No timeout - whoever taps first wins the pile
         return;
