@@ -332,6 +332,7 @@ let isProcessing = false; // Lock state for card resolution
 let gameActive = false;
 let gameStarted = false;
 let totalCardsDealt = 0; // Track total cards dealt
+let gamePaused = false; // Track if game is paused for validation
 
 // DOM Elements
 const zoneA = document.getElementById('zone-a');
@@ -431,7 +432,15 @@ let cardsInPlay = [];
 
 function startGame() {
     // If game is already active, don't restart
-    if (gameActive && gameStarted) return;
+    if (gameActive && gameStarted && !gamePaused) return;
+    
+    // If game is paused, resume it
+    if (gamePaused) {
+        gamePaused = false;
+        displayArea.classList.remove('paused');
+        revealNextCard();
+        return;
+    }
     
     deck = createDeck();
     // Split deck 50/50 between players
@@ -448,6 +457,7 @@ function startGame() {
     gameActive = true;
     gameStarted = true; // Always set to true when starting
     matchFound = false;
+    gamePaused = false; // Ensure paused state is cleared
     
     // Initialize audio on first interaction
     initAudio();
@@ -518,7 +528,7 @@ function revealNextCard() {
         // Don't auto-advance if it's a match - wait for player to slap
         // Set a timeout: if no one slaps within 3 seconds, the current player takes the pile
         autoAdvanceTimer = setTimeout(() => {
-            if (gameActive && gameStarted && matchFound) {
+            if (gameActive && gameStarted && matchFound && !gamePaused) {
                 // No one slapped in time - the player who played this card takes the pile
                 const shuffledPile = shuffle(cardsInPlay);
                 if (callIndex % 2 === 1) {
@@ -530,7 +540,11 @@ function revealNextCard() {
                 cardsInPlay = [];
                 matchFound = false;
                 updateUI(); // Update card counts
-                revealNextCard();
+                
+                // Pause the game for validation - wait for player to tap center to resume
+                gamePaused = true;
+                displayArea.classList.add('paused');
+                return;
             }
         }, 3000);
         return;
@@ -538,14 +552,14 @@ function revealNextCard() {
     
     // Auto-advance to next card after 1.5 seconds only if no match
     autoAdvanceTimer = setTimeout(() => {
-        if (gameActive && gameStarted && !matchFound) {
+        if (gameActive && gameStarted && !matchFound && !gamePaused) {
             revealNextCard();
         }
     }, 1500);
 }
 
 function resolveTap(player) {
-    if (!gameActive || isProcessing) return;
+    if (!gameActive || isProcessing || gamePaused) return;
     isProcessing = true;
 
     const zone = player === 'a' ? zoneA : zoneB;
@@ -587,11 +601,10 @@ function resolveTap(player) {
         totalCardsDealt = 0; // Reset cards dealt counter
         updateUI(); // Update card counts
         
-        // Wait for feedback then reveal next card
-        setTimeout(() => {
-            zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
-            revealNextCard();
-        }, 800);
+        // Pause the game for validation - wait for player to tap center to resume
+        gamePaused = true;
+        displayArea.classList.add('paused');
+        zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
         return;
     } else if (isNearMiss) {
         // Near miss! Show amber/yellow feedback but still penalize
@@ -610,11 +623,10 @@ function resolveTap(player) {
         totalCardsDealt = 0; // Reset cards dealt counter
         updateUI(); // Update card counts
         
-        // Wait for feedback then reveal next card
-        setTimeout(() => {
-            zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
-            revealNextCard();
-        }, 800);
+        // Pause the game for validation - wait for player to tap center to resume
+        gamePaused = true;
+        displayArea.classList.add('paused');
+        zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
         return;
     } else {
         // Wrong slap! Player takes all cards in the pile as penalty
@@ -633,17 +645,17 @@ function resolveTap(player) {
         totalCardsDealt = 0; // Reset cards dealt counter
         updateUI(); // Update card counts
         
-        // Wait for feedback then reveal next card
-        setTimeout(() => {
-            zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
-            revealNextCard();
-        }, 800);
+        // Pause the game for validation - wait for player to tap center to resume
+        gamePaused = true;
+        displayArea.classList.add('paused');
+        zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
         return;
     }
 }
 
 function endGame(winner) {
     gameActive = false;
+    gamePaused = false; // Unpause if game ends while paused
     let winnerText = '';
     if (winner === 'a') {
         winnerText = '<span style="color:#27ae60">Player A Wins!</span>';
@@ -718,6 +730,7 @@ function updateDisplayVisual() {
 
 // Init - start in paused state
 gameStarted = false;
+gamePaused = false;
 updateDisplayVisual();
 
 </script>
