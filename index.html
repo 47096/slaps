@@ -76,6 +76,32 @@
             order: 2;
             margin-bottom: 0;
             margin-top: 10px;
+            flex-direction: row-reverse;
+        }
+
+        /* Player B labels - card count below label */
+        #zone-b .player-label {
+            order: 1;
+            margin-top: 10px;
+        }
+        
+        #zone-b .stat-box {
+            order: 2;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        /* Player A labels (rotated) - card count below label */
+        #zone-a .player-label {
+            order: 1;
+            margin-bottom: 10px;
+        }
+        
+        #zone-a .stat-box {
+            order: 2;
+            margin-bottom: 0;
+            margin-top: 10px;
+            flex-direction: row-reverse;
         }
 
         /* Player B labels - card count below label */
@@ -123,8 +149,9 @@
 
         .stat-box {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
+            gap: 8px;
             min-width: 60px;
         }
 
@@ -133,6 +160,7 @@
             color: #7f8c8d;
             font-weight: 600;
             text-transform: uppercase;
+            white-space: nowrap;
         }
 
         .stat-value {
@@ -269,8 +297,8 @@
     <div id="zone-a" class="player-zone">
         <div class="player-label">Player A</div>
         <div class="stat-box">
-            <span class="stat-label" style="color: rgba(255,255,255,0.5); font-size: 0.6rem;">Cards Left</span>
             <span class="stat-value" style="color: rgba(255,255,255,0.9); font-size: 1.2rem;" id="cards-a">26</span>
+            <span class="stat-label" style="color: rgba(255,255,255,0.5); font-size: 0.6rem;">Cards Left:</span>
         </div>
     </div>
 
@@ -289,7 +317,7 @@
     <div id="zone-b" class="player-zone">
         <div class="player-label">Player B</div>
         <div class="stat-box">
-            <span class="stat-label" style="color: rgba(255,255,255,0.5); font-size: 0.6rem;">Cards Left</span>
+            <span class="stat-label" style="color: rgba(255,255,255,0.5); font-size: 0.6rem;">Cards Left:</span>
             <span class="stat-value" style="color: rgba(255,255,255,0.9); font-size: 1.2rem;" id="cards-b">26</span>
         </div>
     </div>
