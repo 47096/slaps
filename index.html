@@ -122,12 +122,24 @@
             font-weight: 700;
             color: #7f8c8d;
             padding: 5px 0;
+            gap: 8px;
         }
 
         .info-bar span {
             color: #2c3e50;
             font-size: clamp(0.9rem, 3vw, 1.1rem);
-            margin-left: 5px;
+        }
+
+        .info-bar .highlight-text {
+            color: #e74c3c;
+            font-weight: 900;
+            font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+        }
+
+        .info-bar .divider {
+            color: #bdc3c7;
+            font-weight: 400;
+            margin: 0 4px;
         }
 
         .top-info-bar {
@@ -358,7 +370,11 @@
          (Middle section where cards are displayed)
          ==================== -->
     <div id="center-strip">
-        <div class="info-bar top-info-bar">Calling: <span id="top-call-display">A</span></div>
+        <div class="info-bar top-info-bar">
+            <span>Calling:</span> <span id="top-call-display" class="highlight-text">A</span>
+            <span class="divider">|</span>
+            <span>Cards Dealt:</span> <span id="top-cards-dealt" class="highlight-text">0</span>
+        </div>
         <div id="display-area">
             <div id="card-display">
                 <div class="card-back-pattern"></div>
@@ -416,6 +432,7 @@ const zoneA = document.getElementById('zone-a');
 const zoneB = document.getElementById('zone-b');
 const elCard = document.getElementById('card-display');
 const elCallTop = document.getElementById('top-call-display');
+const elCardsDealtTop = document.getElementById('top-cards-dealt');
 const elCardsDealtBottom = document.getElementById('bottom-cards-dealt');
 const elCardsA = document.getElementById('cards-a');
 const elCardsB = document.getElementById('cards-b');
@@ -615,6 +632,9 @@ function revealNextCard() {
     
     callIndex++;
     
+    // Update cards dealt display immediately after revealing
+    updateUI();
+    
     // Check if this card is a match
     const callForThisCard = CALL_SEQUENCE[(callIndex - 1) % CALL_SEQUENCE.length];
     if (currentCard.rank === callForThisCard) {
@@ -780,7 +800,8 @@ function endGame(winner) {
 function updateUI() {
     elCardsA.textContent = player1Cards.length;
     elCardsB.textContent = player2Cards.length;
-    // Use the tracked total cards dealt counter
+    // Use the tracked total cards dealt counter - update both locations
+    elCardsDealtTop.textContent = totalCardsDealt;
     elCardsDealtBottom.textContent = totalCardsDealt;
 }
 
