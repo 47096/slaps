@@ -130,7 +130,8 @@
             font-size: clamp(0.9rem, 3vw, 1.1rem);
         }
 
-        .info-bar .highlight-text {
+        .info-bar .highlight-text,
+        .info-bar .call-value {
             color: #e74c3c;
             font-weight: 900;
             font-size: clamp(1.1rem, 3.5vw, 1.4rem);
@@ -371,7 +372,7 @@
          ==================== -->
     <div id="center-strip">
         <div class="info-bar top-info-bar">
-            <span>Calling:</span> <span id="top-call-display" class="highlight-text">A</span>
+            <span>Calling:</span> <span id="top-call-display" class="highlight-text">-</span>
             <span class="divider">|</span>
             <span>Cards Dealt:</span> <span id="top-cards-dealt" class="highlight-text">0</span>
         </div>
@@ -380,7 +381,11 @@
                 <div class="card-back-pattern"></div>
             </div>
         </div>
-        <div class="info-bar bottom-info-bar">Cards Dealt: <span id="bottom-cards-dealt">0</span></div>
+        <div class="info-bar bottom-info-bar">
+            <span>Calling: <span id="bottom-call-display" class="call-value">-</span></span>
+            <span class="divider">|</span>
+            <span>Cards Dealt: <span id="bottom-cards-dealt">0</span></span>
+        </div>
     </div>
 
     <!-- ====================
@@ -432,6 +437,7 @@ const zoneA = document.getElementById('zone-a');
 const zoneB = document.getElementById('zone-b');
 const elCard = document.getElementById('card-display');
 const elCallTop = document.getElementById('top-call-display');
+const elCallBottom = document.getElementById('bottom-call-display');
 const elCardsDealtTop = document.getElementById('top-cards-dealt');
 const elCardsDealtBottom = document.getElementById('bottom-cards-dealt');
 const elCardsA = document.getElementById('cards-a');
@@ -571,6 +577,10 @@ function startGame() {
     // Initialize audio on first interaction
     initAudio();
     
+    // Reset call displays
+    elCallTop.textContent = '-';
+    elCallBottom.textContent = '-';
+    
     updateUI();
     modal.style.display = 'none';
 
@@ -629,6 +639,7 @@ function revealNextCard() {
     `;
     elCard.className = getSuitColor(currentCard.suit);
     elCallTop.textContent = currentCall;
+    elCallBottom.textContent = currentCall;
     
     callIndex++;
     
