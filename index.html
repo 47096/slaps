@@ -323,6 +323,7 @@ let scores = { a: 0, b: 0 };
 let isProcessing = false; // Lock state for card resolution
 let gameActive = false;
 let gameStarted = false;
+let totalCardsDealt = 0; // Track total cards dealt
 
 // DOM Elements
 const zoneA = document.getElementById('zone-a');
@@ -433,6 +434,7 @@ function startGame() {
     callIndex = 0;
     currentCard = null;
     cardsInPlay = []; // Reset cards in play
+    totalCardsDealt = 0; // Reset cards dealt counter
     scores = { a: 0, b: 0 };
     isProcessing = false;
     gameActive = true;
@@ -470,6 +472,9 @@ function revealNextCard() {
     } else {
         currentCard = player2Cards.pop();
     }
+    
+    // Increment cards dealt counter
+    totalCardsDealt++;
     
     // Update UI to reflect card count change after popping
     updateUI();
@@ -614,9 +619,8 @@ function endGame(winner) {
 function updateUI() {
     elCardsA.textContent = player1Cards.length;
     elCardsB.textContent = player2Cards.length;
-    // Calculate cards dealt: total deck (52) minus cards in players' hands plus cards in play pile
-    const cardsDealt = 52 - player1Cards.length - player2Cards.length + cardsInPlay.length;
-    elCardsDealt.textContent = cardsDealt;
+    // Use the tracked total cards dealt counter
+    elCardsDealt.textContent = totalCardsDealt;
 }
 
 /**
