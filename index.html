@@ -42,7 +42,7 @@
             position: relative;
             max-width: 100vw;
             overflow: hidden;
-            background-color: #ecf0f1; /* Match center strip background to fill any gaps */
+            background-color: #2c3e50; /* Match player zone background */
         }
 
         /* ====================
@@ -57,6 +57,8 @@
             align-items: center;
             position: relative;
             transition: background-color 0.1s ease;
+            flex: 1; /* Each player zone takes equal flexible space */
+            min-height: 0; /* Allow flex items to shrink below content size */
         }
 
         /* Red background on tap - only for incorrect taps */
@@ -79,14 +81,8 @@
         /* Player A Zone - TOP SCREEN (rotated upside down) */
         #zone-a {
             background-color: #2c3e50;
-            border-bottom: none;
             transform: rotate(180deg);
             flex-direction: column;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: calc(var(--vh, 1vh) * 100 / 3);
             padding-top: env(safe-area-inset-top, 0px);
             padding-left: env(safe-area-inset-left, 0px);
             padding-right: env(safe-area-inset-right, 0px);
@@ -96,13 +92,7 @@
         /* Player B Zone - BOTTOM SCREEN (normal orientation) */
         #zone-b {
             background-color: #2c3e50;
-            border-top: none;
             flex-direction: column;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: calc(var(--vh, 1vh) * 100 / 3);
             padding-bottom: env(safe-area-inset-bottom, 0px);
             padding-left: env(safe-area-inset-left, 0px);
             padding-right: env(safe-area-inset-right, 0px);
@@ -131,13 +121,10 @@
             padding: 5px 15px;
             z-index: 2;
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
-            position: absolute;
-            top: calc(var(--vh, 1vh) * 100 / 3);
-            left: 0;
-            right: 0;
-            height: calc(var(--vh, 1vh) * 100 / 3);
             border-top: 2px solid #000;
             border-bottom: 2px solid #000;
+            flex-shrink: 0; /* Prevent center strip from shrinking */
+            width: 100%;
         }
 
         .info-bar {
@@ -148,8 +135,9 @@
             font-size: clamp(0.8rem, 2.5vw, 1rem);
             font-weight: 700;
             color: #7f8c8d;
-            padding: 5px 0;
+            padding: 3px 0;
             gap: 8px;
+            flex-shrink: 0; /* Prevent info bars from shrinking */
         }
 
         .info-bar span {
@@ -178,12 +166,12 @@
 
         .top-info-bar {
             border-bottom: 1px solid #bdc3c7;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
 
         .bottom-info-bar {
             border-top: 1px solid #bdc3c7;
-            margin-top: 5px;
+            margin-top: 3px;
         }
 
         /* Feedback Colors */
@@ -242,6 +230,7 @@
             align-items: center;
             margin: 0 10px;
             cursor: pointer;
+            min-height: 0; /* Allow flex item to shrink */
         }
 
         #display-area.paused {
@@ -919,6 +908,24 @@ window.addEventListener('load', setVhVariable);
 
 // Force recalculation after a short delay to ensure proper rendering
 setTimeout(setVhVariable, 100);
+
+// Adjust center strip size based on screen size for better mobile layout
+function adjustLayoutForMobile() {
+    const centerStrip = document.getElementById('center-strip');
+    const windowHeight = window.innerHeight;
+    
+    // On smaller screens, reduce padding and adjust info bar spacing
+    if (windowHeight < 600) {
+        centerStrip.style.padding = '3px 10px';
+    } else {
+        centerStrip.style.padding = '5px 15px';
+    }
+}
+
+// Run layout adjustment on load and resize
+adjustLayoutForMobile();
+window.addEventListener('resize', adjustLayoutForMobile);
+window.addEventListener('orientationchange', adjustLayoutForMobile);
 
 </script>
 </body>
