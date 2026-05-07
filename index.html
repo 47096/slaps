@@ -575,7 +575,9 @@ function revealNextCard() {
 }
 
 function resolveTap(player) {
-    if (!gameActive || isProcessing || gamePaused) return;
+    if (!gameActive || isProcessing) return;
+    // Allow taps when matchFound is true (matching card showing), but not when game is paused for validation
+    if (gamePaused && !matchFound) return;
     isProcessing = true;
 
     const zone = player === 'a' ? zoneA : zoneB;
