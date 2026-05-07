@@ -137,6 +137,10 @@
             flex-shrink: 0;
         }
 
+        .center-stats.top-stats {
+            transform: rotate(180deg);
+        }
+
         .info-bar {
             width: 100%;
             display: flex;
@@ -405,8 +409,8 @@
          (Middle section where cards are displayed)
          ==================== -->
     <div id="center-strip">
-        <!-- Stats above card (Normal Orientation) -->
-        <div class="center-stats">
+        <!-- Stats above card (Rotated 180° for Player A) -->
+        <div class="center-stats top-stats">
             <div class="stat-box">
                 <span class="stat-label">CALLING</span>
                 <span id="center-call-display" class="stat-value">A</span>
