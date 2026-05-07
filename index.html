@@ -127,6 +127,16 @@
             width: 100%;
         }
 
+        .center-stats {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            padding: 3px 0;
+            flex-shrink: 0;
+        }
+
         .info-bar {
             width: 100%;
             display: flex;
@@ -395,20 +405,32 @@
          (Middle section where cards are displayed)
          ==================== -->
     <div id="center-strip">
-        <div class="info-bar top-info-bar">
-            <span>Calling:</span> <span id="top-call-display" class="highlight-text">A</span>
-            <span class="divider">|</span>
-            <span>Cards Dealt:</span> <span id="top-cards-dealt" class="highlight-text">0</span>
+        <!-- Stats above card (Normal Orientation) -->
+        <div class="center-stats">
+            <div class="stat-box">
+                <span class="stat-label">CALLING</span>
+                <span id="center-call-display" class="stat-value">A</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">DEALT</span>
+                <span id="center-cards-dealt" class="stat-value">0</span>
+            </div>
         </div>
         <div id="display-area">
             <div id="card-display">
                 <div class="card-back-pattern"></div>
             </div>
         </div>
-        <div class="info-bar bottom-info-bar">
-            <span>Calling: <span id="bottom-call-display" class="call-value">A</span></span>
-            <span class="divider">|</span>
-            <span>Cards Dealt: <span id="bottom-cards-dealt">0</span></span>
+        <!-- Stats below card (Normal Orientation) -->
+        <div class="center-stats">
+            <div class="stat-box">
+                <span class="stat-label">CALLING</span>
+                <span id="center-call-display-2" class="stat-value">A</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">DEALT</span>
+                <span id="center-cards-dealt-2" class="stat-value">0</span>
+            </div>
         </div>
     </div>
 
@@ -460,10 +482,10 @@ let gamePaused = false; // Track if game is paused for validation
 const zoneA = document.getElementById('zone-a');
 const zoneB = document.getElementById('zone-b');
 const elCard = document.getElementById('card-display');
-const elCallTop = document.getElementById('top-call-display');
-const elCallBottom = document.getElementById('bottom-call-display');
-const elCardsDealtTop = document.getElementById('top-cards-dealt');
-const elCardsDealtBottom = document.getElementById('bottom-cards-dealt');
+const elCallCenter1 = document.getElementById('center-call-display');
+const elCallCenter2 = document.getElementById('center-call-display-2');
+const elCardsDealtCenter1 = document.getElementById('center-cards-dealt');
+const elCardsDealtCenter2 = document.getElementById('center-cards-dealt-2');
 const elCardsA = document.getElementById('cards-a');
 const elCardsB = document.getElementById('cards-b');
 const modal = document.getElementById('game-over');
@@ -602,8 +624,8 @@ function startGame() {
     initAudio();
     
     // Reset call displays
-    elCallTop.textContent = 'A';
-    elCallBottom.textContent = 'A';
+    elCallCenter1.textContent = 'A';
+    elCallCenter2.textContent = 'A';
     
     updateUI();
     modal.style.display = 'none';
@@ -662,8 +684,8 @@ function revealNextCard() {
         </div>
     `;
     elCard.className = getSuitColor(currentCard.suit);
-    elCallTop.textContent = currentCall;
-    elCallBottom.textContent = currentCall;
+    elCallCenter1.textContent = currentCall;
+    elCallCenter2.textContent = currentCall;
     
     callIndex++;
     
@@ -836,8 +858,8 @@ function updateUI() {
     elCardsA.textContent = player1Cards.length;
     elCardsB.textContent = player2Cards.length;
     // Use the tracked total cards dealt counter - update both locations
-    elCardsDealtTop.textContent = totalCardsDealt;
-    elCardsDealtBottom.textContent = totalCardsDealt;
+    elCardsDealtCenter1.textContent = totalCardsDealt;
+    elCardsDealtCenter2.textContent = totalCardsDealt;
 }
 
 /**
