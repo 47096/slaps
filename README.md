@@ -2,6 +2,8 @@
 
 A two-player face-to-face card game built for mobile browsers. Place your phone flat between two players — each player taps their side of the screen to slap when the dealt card matches the call rank.
 
+<img width="2796" height="1290" alt="screenshot" src="https://github.com/user-attachments/assets/3ddfa280-775b-44b6-b840-bc570bd03064" />
+
 ## How to Play
 
 1. Place the phone flat on a table between two players
