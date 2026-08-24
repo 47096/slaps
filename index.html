@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Slaps">
+    <meta name="theme-color" content="#2c3e50">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     <title>slaps</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,8 +41,8 @@
             display: flex;
             flex-direction: column;
             width: 100%;
-            height: 100dvh; /* Use dynamic viewport height for mobile browsers */
             height: 100vh; /* Fallback for older browsers */
+            height: 100dvh; /* Dynamic viewport height for mobile browsers (must come after fallback) */
             position: relative;
             max-width: 100vw;
             overflow: hidden;
@@ -456,11 +460,6 @@
         <div id="final-scores"></div>
         <button id="restart-btn">Play Again</button>
     </div>
-    
-    <!-- Audio element for slap sound -->
-    <audio id="slap-sound" preload="auto">
-        <source src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=" type="audio/wav">
-    </audio>
 </div>
 
 <script>
@@ -475,7 +474,6 @@ let deck = [];
 let player1Cards = [];
 let player2Cards = [];
 let callIndex = 0;
-let scores = { a: 0, b: 0 };
 let isProcessing = false; // Lock state for card resolution
 let gameActive = false;
 let gameStarted = false;
@@ -617,7 +615,6 @@ function startGame() {
     currentCard = null;
     cardsInPlay = []; // Reset cards in play
     totalCardsDealt = 0; // Reset cards dealt counter
-    scores = { a: 0, b: 0 };
     isProcessing = false;
     gameActive = true;
     gameStarted = true; // Always set to true when starting
@@ -725,118 +722,73 @@ function resolveTap(player) {
     isProcessing = true;
 
     const zone = player === 'a' ? zoneA : zoneB;
-    
+
     // Compare tapped rank against the call that was active when this card was revealed
     const callForThisCard = CALL_SEQUENCE[(callIndex - 1) % CALL_SEQUENCE.length];
     let isMatch = (currentCard.rank === callForThisCard);
-    
+
     // Check for near miss: card rank is within 1 of the call
     const callIndexNum = RANKS.indexOf(callForThisCard);
     const cardIndexNum = RANKS.indexOf(currentCard.rank);
     let isNearMiss = false;
     if (callIndexNum >= 0 && cardIndexNum >= 0) {
-        const diff = Math.abs(callIndexNum - cardIndexNum);
+        // Circular distance so K counts as one rank away from A
+        const linearDiff = Math.abs(callIndexNum - cardIndexNum);
+        const diff = Math.min(linearDiff, RANKS.length - linearDiff);
         isNearMiss = (diff === 1); // One rank away = near miss
     }
 
     // Play slap sound and vibrate on every tap
     playSlapSound();
     vibrateDevice([30]); // Short vibration for tap
-    
-    if (isMatch) {
-        // Correct slap! The OTHER player takes all cards in the pile as penalty
-        zone.classList.add('feedback-success');
-        // Extra vibration for successful match
-        vibrateDevice([50, 30, 50]);
-        
-        // Add all cards from the pile to the OTHER player's deck (penalty)
-        // Shuffle them first for fairness
-        const shuffledPile = shuffle(cardsInPlay);
-        if (player === 'a') {
-            // Player A slapped correctly, so Player B takes the pile
-            player2Cards.push(...shuffledPile);
-        } else {
-            // Player B slapped correctly, so Player A takes the pile
-            player1Cards.push(...shuffledPile);
-        }
-        cardsInPlay = []; // Clear the pile
-        totalCardsDealt = 0; // Reset cards dealt counter
-        matchFound = false; // Reset match flag so game continues normally
-        callIndex = 0; // Reset call sequence to start from A
-        updateUI(); // Update card counts
-        
-        // Pause the game for validation - wait for player to tap center to resume
-        gamePaused = true;
-        displayArea.classList.add('paused');
-        // Don't add wrong-slap for correct matches - keep green feedback
-        // Remove green growing effect from both zones after a short delay
-        setTimeout(() => {
-            zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
-            zoneA.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
-            zoneB.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
-        }, 300);
-        return;
-    } else if (isNearMiss) {
-        // Near miss! Show amber/yellow feedback but still penalize
-        zone.classList.add('feedback-nearmiss');
-        // Medium vibration for near miss
-        vibrateDevice([70]);
-        
-        // Add all cards from the pile to the failing player's deck (same as wrong slap)
-        const shuffledPile = shuffle(cardsInPlay);
-        if (player === 'a') {
-            player1Cards.push(...shuffledPile);
-        } else {
-            player2Cards.push(...shuffledPile);
-        }
-        cardsInPlay = []; // Clear the pile
-        totalCardsDealt = 0; // Reset cards dealt counter
-        matchFound = false; // Reset match flag so game continues normally
-        callIndex = 0; // Reset call sequence to start from A
-        updateUI(); // Update card counts
-        
-        // Pause the game for validation - wait for player to tap center to resume
-        gamePaused = true;
-        displayArea.classList.add('paused');
-        displayArea.classList.add('wrong-slap');
-        // Remove feedback from both zones after a short delay
-        setTimeout(() => {
-            zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
-            zoneA.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
-            zoneB.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
-        }, 300);
-        return;
-    } else {
+
+    if (!isMatch && !isNearMiss) {
         // Wrong slap! Player takes all cards in the pile as penalty
         zone.classList.add('feedback-fail');
-        // Different vibration pattern for fail
         vibrateDevice([100]);
-        
-        // Add all cards from the pile to the failing player's deck
-        const shuffledPile = shuffle(cardsInPlay);
-        if (player === 'a') {
-            player1Cards.push(...shuffledPile);
-        } else {
-            player2Cards.push(...shuffledPile);
-        }
-        cardsInPlay = []; // Clear the pile
-        totalCardsDealt = 0; // Reset cards dealt counter
-        matchFound = false; // Reset match flag so game continues normally
-        callIndex = 0; // Reset call sequence to start from A
-        updateUI(); // Update card counts
-        
-        // Pause the game for validation - wait for player to tap center to resume
-        gamePaused = true;
-        displayArea.classList.add('paused');
-        displayArea.classList.add('wrong-slap');
-        // Remove feedback from both zones after a short delay
-        setTimeout(() => {
-            zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
-            zoneA.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
-            zoneB.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
-        }, 300);
-        return;
+    } else if (isNearMiss) {
+        // Near miss! Amber feedback but still penalised
+        zone.classList.add('feedback-nearmiss');
+        vibrateDevice([70]);
+    } else {
+        // Correct slap! Green feedback + extra vibration
+        zone.classList.add('feedback-success');
+        vibrateDevice([50, 30, 50]);
     }
+
+    // Shared resolution: hand the pile to the penalised player, pause for validation.
+    // Correct slap -> the OTHER player takes the pile; wrong/near-miss -> tapper takes it.
+    const penaliseOtherPlayer = isMatch;
+    const shuffledPile = shuffle(cardsInPlay);
+    if (player === 'a') {
+        if (penaliseOtherPlayer) {
+            player2Cards.push(...shuffledPile); // A slapped correctly, B takes the pile
+        } else {
+            player1Cards.push(...shuffledPile); // A takes the penalty
+        }
+    } else {
+        if (penaliseOtherPlayer) {
+            player1Cards.push(...shuffledPile); // B slapped correctly, A takes the pile
+        } else {
+            player2Cards.push(...shuffledPile); // B takes the penalty
+        }
+    }
+    cardsInPlay = [];      // Clear the pile
+    totalCardsDealt = 0;   // Reset cards dealt counter
+    matchFound = false;    // Reset match flag so game continues normally
+    callIndex = 0;         // Reset call sequence to start from A
+    updateUI();
+
+    // Pause the game for validation - wait for player to tap center to resume.
+    // Correct matches keep green feedback; wrong/near-miss get the red pulse.
+    gamePaused = true;
+    displayArea.classList.add('paused');
+    if (!isMatch) displayArea.classList.add('wrong-slap');
+    setTimeout(() => {
+        zone.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+        zoneA.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+        zoneB.classList.remove('feedback-success', 'feedback-fail', 'feedback-nearmiss');
+    }, 300);
 }
 
 function endGame(winner) {
@@ -850,9 +802,14 @@ function endGame(winner) {
     } else {
         winnerText = '<span style="color:#f1c40f">Draw!</span>';
     }
+    // Include cards stranded in the centre pile so the tally matches what's on the table
+    const pileLine = cardsInPlay.length > 0
+        ? `<br>Cards left in the centre pile: ${cardsInPlay.length}`
+        : '';
     finalScoresEl.innerHTML = `
         Player A cards left: ${player1Cards.length}<br>
         Player B cards left: ${player2Cards.length}<br>
+        ${pileLine}
         ${winnerText}
     `;
     modal.style.display = 'flex';
@@ -922,21 +879,6 @@ gameStarted = false;
 gamePaused = false;
 updateDisplayVisual();
 
-// Set custom viewport height variable for mobile browser compatibility
-function setVhVariable() {
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-}
-
-// Run on load and resize to handle mobile browser chrome changes
-setVhVariable();
-window.addEventListener('resize', setVhVariable);
-window.addEventListener('orientationchange', setVhVariable);
-window.addEventListener('load', setVhVariable);
-
-// Force recalculation after a short delay to ensure proper rendering
-setTimeout(setVhVariable, 100);
-
 // Adjust center strip size based on screen size for better mobile layout
 function adjustLayoutForMobile() {
     const centerStrip = document.getElementById('center-strip');
@@ -954,6 +896,15 @@ function adjustLayoutForMobile() {
 adjustLayoutForMobile();
 window.addEventListener('resize', adjustLayoutForMobile);
 window.addEventListener('orientationchange', adjustLayoutForMobile);
+
+// PWA: register service worker for offline play (https required, so skipped on file://)
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch((err) => {
+            console.warn('Service worker registration failed:', err);
+        });
+    });
+}
 
 </script>
 </body>
