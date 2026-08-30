@@ -2,7 +2,7 @@
 
 A two-player face-to-face card game built for mobile browsers. Place your phone flat between two players — each player taps their side of the screen to slap when the dealt card matches the call rank.
 
-**▶ Play now: [wsamuelw.github.io/slaps](https://wsamuelw.github.io/slaps/)**
+**▶ Play now: [47096.github.io/slaps](https://47096.github.io/slaps/)**
 
 <img width="2796" height="1290" alt="screenshot" src="https://github.com/user-attachments/assets/3ddfa280-775b-44b6-b840-bc570bd03064" />
 
@@ -32,7 +32,7 @@ A two-player face-to-face card game built for mobile browsers. Place your phone 
 
 Slaps is a Progressive Web App — no app store required:
 
-1. Open [wsamuelw.github.io/slaps](https://wsamuelw.github.io/slaps/) on your phone
+1. Open [47096.github.io/slaps](https://47096.github.io/slaps/) on your phone
 2. **iOS Safari:** Share → *Add to Home Screen*
 3. **Android Chrome:** menu → *Add to Home Screen* / *Install app*
 
